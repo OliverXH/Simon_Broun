@@ -27,7 +27,7 @@
 		function setTouch() {
 			var touch = {};
 
-			/* 
+			/*
 			* Joystick
 			*/
 			touch.joystick = {};
@@ -117,8 +117,6 @@
 
 			touch.joystick.events.touchstart = (_event) => {
 				touch.joystick.touched = true;
-
-				console.log("start")
 
 				const _touch = _event.changedTouches[0];
 
