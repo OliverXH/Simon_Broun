@@ -6,9 +6,10 @@ import Time from './Utils/Time.js'
 import World from './World/index.js'
 import Resources from './Resources.js'
 
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'    //   *
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'            // 抗锯齿
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'            //   *
+
 import BlurPass from './Passes/Blur.js'
 import GlowsPass from './Passes/Glows.js'
 import Camera from './Camera.js'

@@ -159,7 +159,7 @@ export default class Area extends EventEmitter
         this.key.container.add(this.key.icon.mesh)
     }
 
-    interact(_showKey = true)
+    interact(_showKey = true)   // 交互
     {
         // Not active
         if(!this.active)

@@ -120,7 +120,7 @@ export default class
     /**
      * Trigger
      */
-    trigger(_name, _args)
+    trigger(_name, _args)   // 触发器
     {
         // Errors
         if(typeof _name === 'undefined' || _name === '')

@@ -246,11 +246,11 @@ export default class Physics
             this.car.vehicle.addToWorld(this.world)
 
             this.car.wheels.indexes = {}
-
             this.car.wheels.indexes.frontLeft = 0
             this.car.wheels.indexes.frontRight = 1
             this.car.wheels.indexes.backLeft = 2
             this.car.wheels.indexes.backRight = 3
+            
             this.car.wheels.bodies = []
 
             for(const _wheelInfos of this.car.vehicle.wheelInfos)
