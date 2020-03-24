@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starting Screen</title>
+    <style type='text/css'>
+        body {
+            background-color: #F9AE7B;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.js"></script>
+    <script>
+        window.onload = function () {
+            console.log('start');
+            var scene, renderer, camera, light, rayCaster;
+
+            var mouse = new THREE.Vector2(), INTERSECTED;
+
+            scene = new THREE.Scene();
+
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true,
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Z 轴向上
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.up.set(0, 0, 1);
+            camera.position.set(1.135 * 4, - 1.45 * 4, 1.15 * 4);
+            camera.lookAt(scene.position);
+
+            light = new THREE.PointLight(0xffffff, 1);
+            light.position.set(2, 2, 5);
+            scene.add(light);
+
+            let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            // scene.add(ambientLight);
+
+            rayCaster = new THREE.Raycaster();
+
+            {
+                var geometry = new THREE.BoxGeometry(1, 1, 1);
+                var material = new THREE.MeshLambertMaterial({
+                    // color: 0xF26405,
+                    emissive: 0xF26405,
+                    emissiveIntensity: 0.8,
+                });
+                var cube = new THREE.Mesh(geometry, material);
+                cube.position.z = 1.4;
+                // cube.rotateX(Math.PI / 4);
+                scene.add(cube);
+            }
+
+            var container = new THREE.Object3D();
+            container.matrixAutoUpdate = false;
+            scene.add(container);
+
+            var startingScreen = {};
+            startingScreen.loadingLabel = {};
+            startingScreen.loadingLabel.image = new Image();
+            startingScreen.loadingLabel.image.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAABABAMAAAAHc7SNAAAAMFBMVEUAAAD///+cnJxra2vR0dHd3d0mJib09PRYWFjp6em4uLhCQkKqqqqNjY19fX3FxcV3XeRgAAADsklEQVRo3u3YsU9TQRwH8KNgLSDQg9ZCAak1IdE4PKPu1NTEsSzOMDl3I3GpcXAxBhLjXFxNjJgQJ2ON0Rnj4uAAEyv8B/L7tV++5/VN+CM69Ldwfa+534d7d793VzeIQQzi/49c4v5lPF/1vvhFm++rjIpcyErrmrSCuz+cxng1iL/If8drPJD2Lc/Iy4VhaZWlFd4tLPfuMc6e/5LvRilJA2SkVSQA8c0OsI0uNtIAU9rsB8y1rAAZjyimAUa1mQDAeGwF+MA+9lIA69qs9AMKVoDP8vhf35A+NiMAc7YJKFSrX7tcI8BW9+k/O/kz6zSunjSnncMHiQYBcmdXrh3xCVbc2WO8N/YZZI0AxxwMArKivmwAwFKSPmV0UwBbCpj5E+C+yzUbQAaJVwUSA9SFjwFgHQ0jAMrBWgzAPCtHgFFbQAlpEwKC2zWUQgJGbAH+naSdu/fTxQAthPL5/ADD6OCpQwCAsb6LsbEGcBluOAYBmG2fkMIawHVWXEsDIGUGpZCAIRsAS93DPgDbhUmUQgKe2NUB90hfhK0YwEJYHkYpJGDbqBKiB86CGLAlzd6/S8CEvh8sACiBvrSXCshKblWEgNy2vkAMAHwGfjECcJHOu5qUQgDm6vXulshZAXJNL9GJAeg+LxeKPQBj1gzgdlnuCWAhbOi7LwaU9u0A2VWPpUgAC+GR5k0iwBtnB3Bj3qMaRYB17X0IOQhYcjYA7guxxyIAGfd1HNqchPfly7aACQUshAA2W1r5G1yG415YpgB3qIIkAHBH2D075QnQ10fHDsCl+CoGSKpiN8kMAVqIN00BsitnVgKyPIBMB4ADKU92AA5BKQIgszjKBGBLagpwB5xZBGS6pbcuizQAXMA6NAK86OCQ3okAI55BQPe7VoDxXzU/iwPASgS4GAASAiYxWgYAzvAa1loA2AkAFQIU2zEELCJtDDgIAG0CFLvp7LblC2kAtF6eTEJJ2CBAr88bAXKY4WkASbzXmwt5AvTvohHA4WSUBmj2Jt+IThQChrAOLQC13vPFMAOAQwuyTAeAKVQto3OBDOdESh2YxNZPbpYBQNbEAoBfod7e1i1BiwB0voSZWgwAOWgtAGPhD18E8ASIiRIAXNPwXJBtcqMbAFAIr5weIJMAcIx1aAAIqk0lAuycompyFwBMHAsAZlj/lgw0rsy2AkhbsgK4Q+70CUBjxeFXsUb0G1HJDJC9rketZRcCWCJwHM8DgJm7b7ch+XizXm25QQxiEOcXvwGCWOhbCZC0qAAAAABJRU5ErkJggg==';
+            startingScreen.loadingLabel.geometry = new THREE.PlaneBufferGeometry(2.5, 2.5 / 4);
+            startingScreen.loadingLabel.texture = new THREE.Texture(startingScreen.loadingLabel.image);
+            startingScreen.loadingLabel.texture.magFilter = THREE.NearestFilter;
+            startingScreen.loadingLabel.texture.minFilter = THREE.LinearFilter;
+            startingScreen.loadingLabel.texture.needsUpdate = true;
+            startingScreen.loadingLabel.material = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, color: 0xffffff, alphaMap: startingScreen.loadingLabel.texture });
+            startingScreen.loadingLabel.mesh = new THREE.Mesh(startingScreen.loadingLabel.geometry, startingScreen.loadingLabel.material);
+            startingScreen.loadingLabel.mesh.matrixAutoUpdate = false;
+            startingScreen.loadingLabel.mesh.rotateX(Math.PI / 2);
+            container.add(startingScreen.loadingLabel.mesh);
+
+            {
+                var borderG = borderBufferGeometry(4.7, 3, 0.25);
+                var border = new THREE.Mesh(borderG, new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    opacity: 0.3,
+                    side: THREE.DoubleSide,
+                    wireframe: false,
+                    transparent: true,
+                    depthTest: true,
+                    depthWrite: false,
+                }));
+                scene.add(border);
+
+                var fence = {};
+                fence.depth = 0.5;
+                fence.offset = 0.25;
+
+                // Geometry
+                fence.geometry = fenceBufferGeometry(4.7, 3, 0.5);
+
+                // Material
+                // this.fence.material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.5 })
+                fence.material = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    wireframe: false,
+                    transparent: true,
+                    side: THREE.DoubleSide,
+                    opacity: 0.3,
+                    depthTest: true,
+                    depthWrite: false,
+                    // uniforms,
+                    // vertexShader: shaderVertex,
+                    // fragmentShader: shaderFragment
+                });
+                // fence.material.uniforms.uBorderAlpha.value = 0.5
+                // fence.material.uniforms.uStrikeAlpha.value = 0.25
+
+                // Mesh
+                fence.mesh = new THREE.Mesh(fence.geometry, fence.material)
+                fence.mesh.position.z = fence.depth;
+                scene.add(fence.mesh);
+
+                {
+                    document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+                    function onDocumentMouseMove(event) {
+
+                        event.preventDefault();
+
+                        // console.log(event.screenX, event.screenY, event.clientX, event.clientY);
+                        // console.log( window.innerWidth, window.innerHeight);
+
+                        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+                    }
+                }
+            }
+
+            function render() {
+                requestAnimationFrame(render);
+                renderer.render(scene, camera);
+
+                cube.rotation.y += 0.02;
+                cube.rotation.x += 0.02;
+
+                {
+                    rayCaster.setFromCamera(mouse, camera);
+
+                    var intersects = rayCaster.intersectObjects(scene.children);
+                    // console.log(intersects[0]);
+
+                }
+            }
+            render();
+
+        }
+
+        function area(_width, _height, _thickness, _container) {
+            _container = _container || new THREE.Object3D();
+            borderBufferGeometry(_width, _height, _thickness);
+            fenceBufferGeometry(_width, _height, _depth);
+            mouseMesh(_width, _height);
+        }
+
+        function mouseMesh(_width, _height) {
+            let mouseMesh = new THREE.Mesh(
+                new THREE.PlaneBufferGeometry(_width, _height, 1, 1),
+                new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+            );
+            mouseMesh.position.z = - 0.01;
+            mouseMesh.matrixAutoUpdate = false;
+            mouseMesh.updateMatrix();
+
+            return mouseMesh;
+        }
+
+        function borderBufferGeometry(_width, _height, _thickness) {
+            var bg = new THREE.BufferGeometry();
+
+            // buffers
+            const length = 8;
+
+            const vertices = new Float32Array(length * 3);
+            const indices = new Uint32Array(length * 6);
+
+            const outerWidth = _width;
+            const outerHeight = _height;
+
+            const innerWidth = outerWidth - _thickness;
+            const innerHeight = outerHeight - _thickness;
+
+            // Vertices
+            vertices[0 * 3 + 0] = innerWidth * 0.5
+            vertices[0 * 3 + 1] = innerHeight * 0.5
+            vertices[0 * 3 + 2] = 0
+
+            vertices[1 * 3 + 0] = innerWidth * 0.5
+            vertices[1 * 3 + 1] = - innerHeight * 0.5
+            vertices[1 * 3 + 2] = 0
+
+            vertices[2 * 3 + 0] = - innerWidth * 0.5
+            vertices[2 * 3 + 1] = - innerHeight * 0.5
+            vertices[2 * 3 + 2] = 0
+
+            vertices[3 * 3 + 0] = - innerWidth * 0.5
+            vertices[3 * 3 + 1] = innerHeight * 0.5
+            vertices[3 * 3 + 2] = 0
+
+            vertices[4 * 3 + 0] = outerWidth * 0.5
+            vertices[4 * 3 + 1] = outerHeight * 0.5
+            vertices[4 * 3 + 2] = 0
+
+            vertices[5 * 3 + 0] = outerWidth * 0.5
+            vertices[5 * 3 + 1] = - outerHeight * 0.5
+            vertices[5 * 3 + 2] = 0
+
+            vertices[6 * 3 + 0] = - outerWidth * 0.5
+            vertices[6 * 3 + 1] = - outerHeight * 0.5
+            vertices[6 * 3 + 2] = 0
+
+            vertices[7 * 3 + 0] = - outerWidth * 0.5
+            vertices[7 * 3 + 1] = outerHeight * 0.5
+            vertices[7 * 3 + 2] = 0
+
+            bg.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+            // Index
+            indices[0 * 3 + 0] = 4
+            indices[0 * 3 + 1] = 0
+            indices[0 * 3 + 2] = 1
+
+            indices[1 * 3 + 0] = 1
+            indices[1 * 3 + 1] = 5
+            indices[1 * 3 + 2] = 4
+
+            indices[2 * 3 + 0] = 5
+            indices[2 * 3 + 1] = 1
+            indices[2 * 3 + 2] = 2
+
+            indices[3 * 3 + 0] = 2
+            indices[3 * 3 + 1] = 6
+            indices[3 * 3 + 2] = 5
+
+            indices[4 * 3 + 0] = 6
+            indices[4 * 3 + 1] = 2
+            indices[4 * 3 + 2] = 3
+
+            indices[5 * 3 + 0] = 3
+            indices[5 * 3 + 1] = 7
+            indices[5 * 3 + 2] = 6
+
+            indices[6 * 3 + 0] = 7
+            indices[6 * 3 + 1] = 3
+            indices[6 * 3 + 2] = 0
+
+            indices[7 * 3 + 0] = 0
+            indices[7 * 3 + 1] = 4
+            indices[7 * 3 + 2] = 7
+
+            // Set indices
+            bg.setIndex(new THREE.BufferAttribute(indices, 1, false));
+
+            return bg;
+
+        }
+
+        function fenceBufferGeometry(_width, _height, _depth) {
+            var fence = new THREE.BufferGeometry();
+
+            const length = 8
+
+            const vertices = new Float32Array(length * 3)
+            const uvs = new Uint32Array(length * 2)
+            const indices = new Uint32Array(length * 6)
+
+            // Vertices
+            vertices[0 * 3 + 0] = _width * 0.5
+            vertices[0 * 3 + 1] = _height * 0.5
+            vertices[0 * 3 + 2] = 0
+
+            vertices[1 * 3 + 0] = _width * 0.5
+            vertices[1 * 3 + 1] = - _height * 0.5
+            vertices[1 * 3 + 2] = 0
+
+            vertices[2 * 3 + 0] = - _width * 0.5
+            vertices[2 * 3 + 1] = - _height * 0.5
+            vertices[2 * 3 + 2] = 0
+
+            vertices[3 * 3 + 0] = - _width * 0.5
+            vertices[3 * 3 + 1] = _height * 0.5
+            vertices[3 * 3 + 2] = 0
+
+            vertices[4 * 3 + 0] = _width * 0.5
+            vertices[4 * 3 + 1] = _height * 0.5
+            vertices[4 * 3 + 2] = _depth
+
+            vertices[5 * 3 + 0] = _width * 0.5
+            vertices[5 * 3 + 1] = - _height * 0.5
+            vertices[5 * 3 + 2] = _depth
+
+            vertices[6 * 3 + 0] = - _width * 0.5
+            vertices[6 * 3 + 1] = - _height * 0.5
+            vertices[6 * 3 + 2] = _depth
+
+            vertices[7 * 3 + 0] = - _width * 0.5
+            vertices[7 * 3 + 1] = _height * 0.5
+            vertices[7 * 3 + 2] = _depth
+
+            // Uvs
+            uvs[0 * 2 + 0] = 0
+            uvs[0 * 2 + 1] = 0
+
+            uvs[1 * 2 + 0] = 1 / 3
+            uvs[1 * 2 + 1] = 0
+
+            uvs[2 * 2 + 0] = 1 / 3 * 2
+            uvs[2 * 2 + 1] = 0
+
+            uvs[3 * 2 + 0] = 1
+            uvs[3 * 2 + 1] = 0
+
+            uvs[4 * 2 + 0] = 0
+            uvs[4 * 2 + 1] = 1
+
+            uvs[5 * 2 + 0] = 1 / 3
+            uvs[5 * 2 + 1] = 1
+
+            uvs[6 * 2 + 0] = 1 / 3 * 2
+            uvs[6 * 2 + 1] = 1
+
+            uvs[7 * 2 + 0] = 1
+            uvs[7 * 2 + 1] = 1
+
+            // Index
+            indices[0 * 3 + 0] = 0
+            indices[0 * 3 + 1] = 4
+            indices[0 * 3 + 2] = 1
+
+            indices[1 * 3 + 0] = 5
+            indices[1 * 3 + 1] = 1
+            indices[1 * 3 + 2] = 4
+
+            indices[2 * 3 + 0] = 1
+            indices[2 * 3 + 1] = 5
+            indices[2 * 3 + 2] = 2
+
+            indices[3 * 3 + 0] = 6
+            indices[3 * 3 + 1] = 2
+            indices[3 * 3 + 2] = 5
+
+            indices[4 * 3 + 0] = 2
+            indices[4 * 3 + 1] = 6
+            indices[4 * 3 + 2] = 3
+
+            indices[5 * 3 + 0] = 7
+            indices[5 * 3 + 1] = 3
+            indices[5 * 3 + 2] = 6
+
+            indices[6 * 3 + 0] = 3
+            indices[6 * 3 + 1] = 7
+            indices[6 * 3 + 2] = 0
+
+            indices[7 * 3 + 0] = 4
+            indices[7 * 3 + 1] = 0
+            indices[7 * 3 + 2] = 7
+
+            // Set indices
+            fence.setIndex(new THREE.BufferAttribute(indices, 1, false))
+
+            // Set attributes
+            fence.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3))
+            fence.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
+
+            return fence;
+        }
+
+    </script>
+</body>
+
+</html>

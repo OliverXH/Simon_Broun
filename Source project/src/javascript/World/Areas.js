@@ -28,7 +28,7 @@ export default class Areas
     {
         // Set up
         this.mouse = {}
-        this.mouse.raycaster = new THREE.Raycaster()
+        this.mouse.raycaster = new THREE.Raycaster()    // 射线检测
         this.mouse.coordinates = new THREE.Vector2()
         this.mouse.currentArea = null
         this.mouse.needsUpdate = false

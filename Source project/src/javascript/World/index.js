@@ -223,7 +223,7 @@ export default class
             })
         })
 
-        // On interact, reveal
+        // On interact, reveal  交互， 显示
         this.startingScreen.area.on('interact', () =>
         {
             this.startingScreen.area.deactivate()
